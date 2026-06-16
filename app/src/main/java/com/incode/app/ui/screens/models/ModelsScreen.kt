@@ -47,6 +47,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.rotate
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
@@ -288,6 +289,4 @@ private fun ModelRow(
     }
 }
 
-private fun Modifier.rotate(degrees: Float): Modifier = this.then(
-    androidx.compose.ui.draw.rotate(degrees)
-)
+

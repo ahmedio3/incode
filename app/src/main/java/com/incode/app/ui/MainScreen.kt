@@ -10,11 +10,10 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Chat
-import androidx.compose.material.icons.filled.Robot
 import androidx.compose.material.icons.filled.Settings
 import androidx.compose.material.icons.outlined.Chat
-import androidx.compose.material.icons.outlined.Robot
 import androidx.compose.material.icons.outlined.Settings
+import androidx.compose.material.icons.outlined.SmartToy
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.NavigationBar
@@ -48,7 +47,7 @@ data class BottomNavItem(
 
 private val bottomNavItems = listOf(
     BottomNavItem("Chats", NavRoutes.HOME, Icons.Filled.Chat, Icons.Outlined.Chat),
-    BottomNavItem("Agents", NavRoutes.AGENTS, Icons.Filled.Robot, Icons.Outlined.Robot),
+    BottomNavItem("Agents", NavRoutes.AGENTS, Icons.Filled.Settings, Icons.Outlined.SmartToy),
     BottomNavItem("Settings", NavRoutes.SETTINGS, Icons.Filled.Settings, Icons.Outlined.Settings)
 )
 
@@ -85,8 +84,7 @@ fun MainScreen(
                 exit = slideOutVertically(targetOffsetY = { it })
             ) {
                 NavigationBar(
-                    containerColor = IncodeBottomNav,
-                    tonalElevation = androidx.compose.ui.unit.dp.times(0)
+                    containerColor = IncodeBottomNav
                 ) {
                     bottomNavItems.forEach { item ->
                         val isSelected = currentRoute == item.route

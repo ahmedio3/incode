@@ -30,7 +30,7 @@ import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.ExperimentalMaterial3Api
-import androidx.compose.material3.HorizontalDivider
+import androidx.compose.material3.Divider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
@@ -196,7 +196,7 @@ fun SessionDetailScreen(
                         StatRow(null, "Input", formatTokens(session.tokensInput))
                         StatRow(null, "Output", formatTokens(session.tokensOutput))
                         StatRow(null, "Reasoning", formatTokens(session.tokensReasoning))
-                        HorizontalDivider(
+                        Divider(
                             modifier = Modifier.padding(vertical = 8.dp),
                             color = IncodeTextSecondary.copy(alpha = 0.2f)
                         )

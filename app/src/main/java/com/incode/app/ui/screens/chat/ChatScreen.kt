@@ -13,6 +13,7 @@ import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
@@ -175,8 +176,7 @@ fun ChatScreen(
                     }
                     DropdownMenu(
                         expanded = showMenu,
-                        onDismissRequest = { showMenu = false },
-                        containerColor = IncodeSurface
+                        onDismissRequest = { showMenu = false }
                     ) {
                         DropdownMenuItem(
                             text = { Text("Clear chat", color = IncodeTextPrimary) },
@@ -239,96 +239,99 @@ fun ChatScreen(
                     }
                 }
             } else {
-                LazyColumn(
-                    state = listState,
-                    modifier = Modifier.fillMaxSize(),
-                    verticalArrangement = Arrangement.spacedBy(2.dp)
-                ) {
-                    items(
-                        items = state.messages,
-                        key = { it.id }
-                    ) { item ->
-                        when (item.type) {
-                            ChatItemType.TEXT -> {
-                                if (item.isUser) {
-                                    ChatBubble(
+                // Use Box wrapper to resolve scope ambiguity
+                Box(modifier = Modifier.fillMaxSize()) {
+                    LazyColumn(
+                        state = listState,
+                        modifier = Modifier.fillMaxSize(),
+                        verticalArrangement = Arrangement.spacedBy(2.dp)
+                    ) {
+                        items(
+                            items = state.messages,
+                            key = { it.id }
+                        ) { item ->
+                            when (item.type) {
+                                ChatItemType.TEXT -> {
+                                    if (item.isUser) {
+                                        ChatBubble(
+                                            text = item.text,
+                                            isUser = true,
+                                            timestamp = item.timestamp
+                                        )
+                                    } else {
+                                        ChatBubble(
+                                            text = item.text,
+                                            isUser = false,
+                                            timestamp = item.timestamp,
+                                            agent = item.agent ?: state.currentAgent
+                                        )
+                                    }
+                                }
+                                ChatItemType.REASONING -> {
+                                    ReasoningBlock(
                                         text = item.text,
-                                        isUser = true,
-                                        timestamp = item.timestamp
+                                        duration = item.duration
                                     )
-                                } else {
+                                }
+                                ChatItemType.TOOL_INVOCATION -> {
+                                    ToolCallCard(
+                                        toolName = item.toolName ?: "tool",
+                                        args = item.args,
+                                        isRunning = item.isRunning
+                                    )
+                                }
+                                ChatItemType.TOOL_RESULT -> {
+                                    ToolCallCard(
+                                        toolName = item.toolName ?: "tool",
+                                        args = null,
+                                        result = item.result,
+                                        isRunning = false
+                                    )
+                                }
+                                ChatItemType.STEP_START -> {
+                                    StreamingIndicator(isStreaming = true)
+                                }
+                                ChatItemType.STEP_FINISH -> {
+                                    // Small gap
+                                }
+                                ChatItemType.STREAMING_TEXT -> {
                                     ChatBubble(
                                         text = item.text,
                                         isUser = false,
-                                        timestamp = item.timestamp,
                                         agent = item.agent ?: state.currentAgent
                                     )
                                 }
                             }
-                            ChatItemType.REASONING -> {
-                                ReasoningBlock(
-                                    text = item.text,
-                                    duration = item.duration
-                                )
-                            }
-                            ChatItemType.TOOL_INVOCATION -> {
-                                ToolCallCard(
-                                    toolName = item.toolName ?: "tool",
-                                    args = item.args,
-                                    isRunning = item.isRunning
-                                )
-                            }
-                            ChatItemType.TOOL_RESULT -> {
-                                ToolCallCard(
-                                    toolName = item.toolName ?: "tool",
-                                    args = null,
-                                    result = item.result,
-                                    isRunning = false
-                                )
-                            }
-                            ChatItemType.STEP_START -> {
-                                StreamingIndicator(isStreaming = true)
-                            }
-                            ChatItemType.STEP_FINISH -> {
-                                // Small gap
-                            }
-                            ChatItemType.STREAMING_TEXT -> {
-                                ChatBubble(
-                                    text = item.text,
-                                    isUser = false,
-                                    agent = item.agent ?: state.currentAgent
-                                )
-                            }
                         }
                     }
-                }
 
-                // Scroll to bottom button
-                AnimatedVisibility(
-                    visible = showScrollDownButton,
-                    modifier = Modifier
-                        .align(Alignment.BottomEnd)
-                        .padding(16.dp),
-                    enter = fadeIn(),
-                    exit = fadeOut()
-                ) {
-                    IconButton(
-                        onClick = {
-                            scope.launch {
-                                listState.animateScrollToItem(state.messages.size - 1)
-                            }
-                        },
+                    // Scroll to bottom button
+                    AnimatedVisibility(
+                        visible = showScrollDownButton,
                         modifier = Modifier
-                            .size(40.dp)
-                            .clip(CircleShape)
-                            .background(IncodeSurface)
+                            .align(Alignment.BottomEnd)
+                            .padding(16.dp),
+                        enter = fadeIn(),
+                        exit = fadeOut()
                     ) {
-                        Icon(
-                            imageVector = Icons.Default.ArrowDownward,
-                            contentDescription = "Scroll to bottom",
-                            tint = IncodeTextSecondary,
-                            modifier = Modifier.size(20.dp)
-                        )
+                        IconButton(
+                            onClick = {
+                                scope.launch {
+                                    listState.animateScrollToItem(state.messages.size - 1)
+                                }
+                            },
+                            modifier = Modifier
+                                .size(40.dp)
+                                .clip(CircleShape)
+                                .background(IncodeSurface)
+                        ) {
+                            Icon(
+                                imageVector = Icons.Default.ArrowDownward,
+                                contentDescription = "Scroll to bottom",
+                                tint = IncodeTextSecondary,
+                                modifier = Modifier.size(20.dp)
+                            )
+                        }
                     }
                 }
             }

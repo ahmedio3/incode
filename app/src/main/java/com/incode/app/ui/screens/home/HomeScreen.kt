@@ -25,6 +25,7 @@ import androidx.compose.material.icons.filled.Delete
 import androidx.compose.material.icons.filled.Inbox
 import androidx.compose.material.icons.filled.Search
 import androidx.compose.material.icons.filled.Close
+import androidx.compose.material.icons.filled.Refresh
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
@@ -40,8 +41,6 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.TopAppBarDefaults
-import androidx.compose.material3.pulltorefresh.PullToRefreshContainer
-import androidx.compose.material3.pulltorefresh.rememberPullToRefreshState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
@@ -51,7 +50,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.input.nestedscroll.nestedScroll
+
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
@@ -77,20 +76,10 @@ fun HomeScreen(
     var showDeleteConfirm by remember { mutableStateOf<String?>(null) }
     var newSessionTitle by remember { mutableStateOf("") }
 
-    val pullRefreshState = rememberPullToRefreshState()
-
-    if (pullRefreshState.isRefreshing) {
-        LaunchedEffect(true) {
-            viewModel.loadSessions()
-            pullRefreshState.endRefresh()
-        }
-    }
-
     Box(
         modifier = Modifier
             .fillMaxSize()
             .background(IncodeBackground)
-            .nestedScroll(pullRefreshState.nestedScrollConnection)
     ) {
         Column(modifier = Modifier.fillMaxSize()) {
             // Top Bar
@@ -105,7 +94,16 @@ fun HomeScreen(
                 },
                 colors = TopAppBarDefaults.topAppBarColors(
                     containerColor = IncodeTopBar
-                )
+                ),
+                actions = {
+                    IconButton(onClick = { viewModel.loadSessions() }) {
+                        Icon(
+                            imageVector = Icons.Default.Refresh,
+                            contentDescription = "Refresh",
+                            tint = IncodeTextSecondary
+                        )
+                    }
+                }
             )
 
             // Search bar
@@ -211,13 +209,6 @@ fun HomeScreen(
             )
         }
 
-        // Pull to refresh indicator
-        PullToRefreshContainer(
-            state = pullRefreshState,
-            modifier = Modifier.align(Alignment.TopCenter),
-            containerColor = IncodeSurface,
-            contentColor = IncodePrimary
-        )
     }
 
     // Create Session Dialog
