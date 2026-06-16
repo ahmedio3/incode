@@ -306,33 +306,14 @@ fun ChatScreen(
                     }
 
                     // Scroll to bottom button
-                    AnimatedVisibility(
+                    ScrollToBottomButton(
                         visible = showScrollDownButton,
-                        modifier = Modifier
-                            .align(Alignment.BottomEnd)
-                            .padding(16.dp),
-                        enter = fadeIn(),
-                        exit = fadeOut()
-                    ) {
-                        IconButton(
-                            onClick = {
-                                scope.launch {
-                                    listState.animateScrollToItem(state.messages.size - 1)
-                                }
-                            },
-                            modifier = Modifier
-                                .size(40.dp)
-                                .clip(CircleShape)
-                                .background(IncodeSurface)
-                        ) {
-                            Icon(
-                                imageVector = Icons.Default.ArrowDownward,
-                                contentDescription = "Scroll to bottom",
-                                tint = IncodeTextSecondary,
-                                modifier = Modifier.size(20.dp)
-                            )
+                        onClick = {
+                            scope.launch {
+                                listState.animateScrollToItem(state.messages.size - 1)
+                            }
                         }
-                    }
+                    )
                 }
             }
         }
@@ -438,6 +419,37 @@ fun ChatScreen(
                     modifier = Modifier.size(22.dp)
                 )
             }
+        }
+    }
+}
+
+@Composable
+private fun ScrollToBottomButton(
+    visible: Boolean,
+    onClick: () -> Unit
+) {
+    AnimatedVisibility(
+        visible = visible,
+        modifier = Modifier
+            .align(Alignment.BottomEnd)
+            .padding(16.dp),
+        enter = fadeIn(),
+        exit = fadeOut()
+    ) {
+        val scope = rememberCoroutineScope()
+        IconButton(
+            onClick = onClick,
+            modifier = Modifier
+                .size(40.dp)
+                .clip(CircleShape)
+                .background(IncodeSurface)
+        ) {
+            Icon(
+                imageVector = Icons.Default.ArrowDownward,
+                contentDescription = "Scroll to bottom",
+                tint = IncodeTextSecondary,
+                modifier = Modifier.size(20.dp)
+            )
         }
     }
 }
