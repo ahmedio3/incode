@@ -424,7 +424,7 @@ fun ChatScreen(
 }
 
 @Composable
-private fun ScrollToBottomButton(
+private fun BoxScope.ScrollToBottomButton(
     visible: Boolean,
     onClick: () -> Unit
 ) {
