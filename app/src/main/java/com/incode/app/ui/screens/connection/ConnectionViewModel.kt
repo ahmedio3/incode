@@ -1,5 +1,6 @@
 package com.incode.app.ui.screens.connection
 
+import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.incode.app.data.model.ServerConfig
@@ -93,10 +94,12 @@ class ConnectionViewModel : ViewModel() {
                 )
             } catch (e: Exception) {
                 ServerConnection.setConnected(false)
+                val errorDetails = e.message ?: e.localizedMessage ?: e.javaClass.simpleName ?: "Unknown error"
+                Log.e("ConnectionVM", "Connection failed", e)
                 _uiState.value = _uiState.value.copy(
                     isConnecting = false,
                     isConnected = false,
-                    error = "Connection failed: ${e.localizedMessage ?: "Unknown error"}"
+                    error = "Connection failed: $errorDetails"
                 )
             }
         }
